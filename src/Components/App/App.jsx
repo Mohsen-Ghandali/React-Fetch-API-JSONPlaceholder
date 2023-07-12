@@ -1,29 +1,46 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const App = () => {
-  const [posts, setPosts] = useState(null)
+  let [posts, setPosts] = useState(null); //for clean up must let use
+
   useEffect(() => {
-    fetch("https://jsonplaceholder.typicode.com/posts").then(data => data.json()).then(res => {
-      setPosts(res)
-    }).catch(error => console.log(error))
-  })
+    console.log("trigger posts");
+
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setPosts(data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    //------start clean up----
+    return () => {
+      console.log("trigger clean up");
+      setPosts(null);
+    };
+
+  }, []);
+  //------end clean up----
+
   return (
-    <div className=" container-fluid  text-white mt-2 ">
-      <div className="row m-0 justify-content-center" >
-        {posts === null ? "" : posts.map((elem) => {
-          return (
-            <div className="col-5 bg-dark p-3 m-1 shadow-lg rounded-2">
+    <div className="container-fluid text-white mt-2">
+      <div className="row m-0 justify-content-center">
+        {posts === null
+          ? ""
+          : posts.map((elem) => (
+            <div
+              className="col-5 bg-dark p-3 m-1 shadow-lg rounded-2"
+              key={elem.id}
+            >
               <h4>{elem.title.substr(0, 30)}</h4>
               <p>{elem.body.substr(0, 100)}</p>
             </div>
-          )
-        })}
+          ))}
       </div>
-
     </div>
-
   );
 };
 
 export default App;
-
